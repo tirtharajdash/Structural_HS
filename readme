@@ -1,0 +1,2 @@
+(hot threshold) main run file:	run_simul.m ----calls----> function_simul.m ----calls----> drawSample.m
+(hot-and-cold threshold) main run file:	run_simul1.m ----calls----> function_simul1.m ----calls----> drawSample.m
