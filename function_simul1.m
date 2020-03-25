@@ -6,43 +6,47 @@ function [foundIdx,foundMISS] = function_simul1(N,choiceH,choiceUpdS,MaxHideTria
 
 %% Set Number of Boxes
 fprintf('-------\nINPUTS\n-------')
-fprintf('\nEnter number of locations: %d',N);
+fprintf('\nNumber of locations: %d',N);
 
 %% Generate Hider Distribution, H
 
-fprintf('\nChoice of H (1: easy, 2: less easy, 3: less hard, 4: hard): %d',choiceH);
+fprintf('\nChoice of H: %d',choiceH);
 
-% switch choiceH
-%     case 1
-%         %choice 1 [easy]: degenerate H
-%         loc = randperm(N,1);
-%         H = zeros(1,N); H(loc) = 1;
-%     case 2
-%         %choice 2 [less easy]: semi-degenerate H
-%         n_loc = ceil(0.25*N);
-%         loc = randperm(N,n_loc);
-%         H = zeros(1,N); H(loc) = 1; H = H / sum(H);
-%     case 3
-%         %choice 3 [less hard]: normal H
-%         H = rand(1,N); H = H / sum(H);
-%     case 4
-%         %Choice 4 [hard]: Uniform H
-%         H = ones(1,N)/N;
-% end
+switch choiceH
+    case 0
+        %choice 0 []: 
+    case 1
+        %choice 1 [easy]: degenerate H
+        loc = randperm(N,1);
+        H = zeros(1,N); H(loc) = 1;
+    case 2
+        %choice 2 [less easy]: semi-degenerate H
+        n_loc = ceil(0.25*N);
+        loc = randperm(N,n_loc);
+        H = zeros(1,N); H(loc) = 1; H = H / sum(H);
+    case 3
+        %choice 3 [less hard]: normal H
+        H = rand(1,N); H = H / sum(H);
+    case 4
+        %Choice 4 [hard]: Uniform H
+        H = ones(1,N)/N;
+    case 5
+        %Choice 5 [multimodal]: Multimodal H
+        %added latest: multimodal Hider for neighborhood test
+        k = 0.10; %proportion of spikes in the distro
+        H = multimodalDistro(N,k);
+end
 
-%added latest: multimodal Hider for neighborhood test
-k = 0.10; %proportion of spikes in the distro
-H = multimodalDistro(N,k);
 
-Hperf = H / max(H); %performance of boxes
-
+%% Performance associated with each box
+Hperf = associatePerfs(H);
 
 %% Seeker distribution update choice
-fprintf('\nUpdate S type (1: no update, 2: uniform update, 3: structural update): %d',choiceUpdS);
+fprintf('\nUpdate S type: %d',choiceUpdS);
 
 %create the neighborhood for boxes
 if(choiceUpdS == 3)
-    nbd = createNeighbors(N,1); %arg2 is neighborhood size
+    nbd = createNeighbors(N,3); %arg2 is neighborhood size
 end
 
 %% Search Procedure with Seeker Distribution, S
@@ -53,7 +57,7 @@ HIT = zeros(1,MaxHideTrials); %whether the hider was found
 %start hide-seek
 fprintf('\n[Started] Hide-and-Seek simulation...\n');
 for hideIter = 1:MaxHideTrials
-    hBox = discretesample(H,1); %hiding location
+    hBox = drawSample(H,1); %hiding location
     
     foundFlag = false; %not found yet
     S = ones(1,N)/N; %start with S being Unif(1,N)

@@ -44,46 +44,47 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 
 	\item[Results] The mean and standard deviations of misses are calculated only for successful runs i.e. the hider was found by the seeker within maximum of $n$ look-ups. Otherwise, it was treated as a failure and this result was not included for statistics. Below, we report results for each seeker update strategies.
 	\begin{figure}[!h]
-		\centering
-		\begin{tabular}{llll}
-			\hline \hline 
-			choiceUpdS & SuccessRate & mean(misses) & sd(misses) \\
-			\hline \hline 
-			\multicolumn{4}{c}{$n = 1000$} \\ 
-			\hline 
-			1 &  0.617 & 410.929 & 278.666 \\
-			2 &  1.000 & 507.848 & 284.743 \\
-			3 ($nbd=1$) & 1.000 & 470.455 & 269.662 \\
-			3 ($nbd=2$) & 1.000 & 481.031 & 273.743 \\
-			3 ($nbd=3$) & 1.000 & 496.920 & 281.998 \\
-			\hline 
-			\hline 
-			\multicolumn{4}{c}{$n = 2000$} \\ 
-			\hline 
-			1 &  0.636 & 825.852 & 570.932 \\
-			2 &  1.000 & 1032.257 & 582.563 \\
-			3 ($nbd=1$) & 1.000 & 941.797 & 559.658 \\
-			3 ($nbd=2$) & 1.000 & 935.739 & 552.096 \\
-			3 ($nbd=3$) & 1.000 & 993.009 & 565.132 \\
-			\hline 
-			\hline 
-			\multicolumn{4}{c}{$n = 3000$} \\ 
-			\hline 
-			1 &  0.646 & 1290.207 & 844.649 \\
-			2 &  1.000 & 1489.962 & 867.514 \\
-			3 ($nbd=1$) & 1.000 & 1366.866 & 800.812 \\
-			3 ($nbd=2$) & 1.000 & 1430.131 & 820.963 \\
-			3 ($nbd=3$) & 1.000 & 1429.897 & 840.993 \\
-			\hline 
-			\hline 
-		\end{tabular}
-		\caption{Average number of misses for three seeker update strategies}
+	\centering
+	\begin{tabular}{llll}
+		\hline \hline 
+		choiceUpdS & SuccessRate & mean(misses) & sd(misses) \\
+		\hline \hline 
+		\multicolumn{4}{c}{$n = 1000$} \\ 
+		\hline 
+		1 &  0.622 & 439.738 & 279.218 \\
+		2 &  1.000 & 499.379 & 279.060 \\
+		3 ($nbd=1$) &  1.000 & 486.041 & 271.251 \\
+		3 ($nbd=2$) &  1.000 & 458.027 & 269.987 \\
+		3 ($nbd=3$) &  1.000 & 479.270 & 279.110 \\
+		\hline 
+		\hline 
+		\multicolumn{4}{c}{$n = 2000$} \\ 
+		\hline 
+		1 &  0.635 & 859.123 & 571.302 \\
+		2 &  1.000 & 1022.204 & 595.486 \\
+		3 ($nbd=1$) &  1.000 & 963.457 & 550.133 \\
+		3 ($nbd=2$) &  1.000 & 961.946 & 551.028 \\
+		3 ($nbd=3$) &  1.000 & 968.335 & 564.515 \\
+		\hline 
+		\hline 
+		\multicolumn{4}{c}{$n = 3000$} \\ 
+		\hline 
+		1 &  0.652 & 1303.462 & 854.176 \\
+		2 &  1.000 & 1473.717 & 865.756 \\
+		3 ($nbd=1$) &  1.000 & 1436.214 & 801.100 \\
+		3 ($nbd=2$) &  1.000 & 1396.195 & 840.066 \\
+		3 ($nbd=2$) &  1.000 & 1464.990 & 840.695 \\
+		\hline 
+		\hline 
+	\end{tabular}
+	\caption{Average number of misses: $H$ is a multimodal distribution with 10\% spikes, and $S$ is updated using three different update strategies (1: no update, 2: without replacement, 3: update using $\theta_h$ and $\theta_c$) using three different neighborhood structures \{1,2,3\}.}
 	\end{figure}
 
-	\item[Interpretation] The results suggest that the seeker update strategy (\ref{supdhc}):
+	\item[Interpretation] The results suggest that the threshold based seeker update strategy (\ref{supdhc}):
 	\begin{itemize}
-		\item reduces the average number of misses in comparison with search without replacement for which the expected number of misses is $\frac{n-1}{2}$ (i.e. choiceUpdS$=2$ in tables).
-		\item Increasing the $nbd$ a box increases the average number of misses in almost all the cases.
+		\item Reduces the average number of misses in comparison with search without replacement for which the expected number of misses is $\frac{n-1}{2}$ (i.e. choiceUpdS$=2$ in tables).
+		\item For the seeker updat type (\ref{supdhc}), best neighborhood size is found to be 2. 
+		\item Increasing the neighborhood size of a box increases the average number of misses in almost all the cases.
 	\end{itemize}
 	
 \end{description}
