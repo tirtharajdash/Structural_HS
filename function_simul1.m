@@ -44,9 +44,14 @@ Hperf = associatePerfs(H);
 %% Seeker distribution update choice
 fprintf('\nUpdate S type: %d',choiceUpdS);
 
-%create the neighborhood for boxes
+%create the neighborhood for boxes (case 3 update)
 if(choiceUpdS == 3)
     nbd = createNeighbors(N,3); %arg2 is neighborhood size
+end
+
+%create the local neighborhood for boxes (case 4 update)
+if(choiceUpdS == 4)
+    localnbd = createNeighbors(N,3); %arg2 is neighborhood size
 end
 
 %% Search Procedure with Seeker Distribution, S
@@ -59,7 +64,6 @@ fprintf('\n[Started] Hide-and-Seek simulation...\n');
 for hideIter = 1:MaxHideTrials
     hBox = drawSample(H,1); %hiding location
     
-    foundFlag = false; %not found yet
     S = ones(1,N)/N; %start with S being Unif(1,N)
     MissCnt = 0; %bad guesses or misses
     Opened = []; %book-keeping of boxes opened so far
@@ -68,7 +72,6 @@ for hideIter = 1:MaxHideTrials
     while(MissCnt < N)
         box = drawSample(S,1);
         if(box == hBox)
-            foundFlag = true;
             HIT(hideIter) = 1; %hider was found by seeker
             MISS(hideIter) = MissCnt; %how many misses before finding hider
             %fprintf('HideIter = %d\t Misses = %d\n',hideIter,MISS(hideIter));
@@ -98,6 +101,22 @@ for hideIter = 1:MaxHideTrials
                         S(toUpdate) = S(toUpdate) + S(box)/length(toUpdate);
                     end
                 end
+                S(Opened) = 0;
+                S = S / sum(S);
+            case 4 %structural update (local sampling)
+                nbdInOpened = intersect(Opened,localnbd{box});
+                nbdToOpen = setdiff(localnbd{box},nbdInOpened);
+                for i=1:length(nbdToOpen)
+                    if(hBox == nbdToOpen(i))
+                        HIT(hideIter) = 1; %hider was found by seeker
+                        MISS(hideIter) = MissCnt;
+                        break;
+                    else
+                        MissCnt = MissCnt + 1;
+                        Opened(MissCnt) = nbdToOpen(i);
+                    end
+                end
+                %without replacement (case 2 type)
                 S(Opened) = 0;
                 S = S / sum(S);
         end
