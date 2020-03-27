@@ -1,16 +1,16 @@
-\documentclass[11pt,a4paper,draft]{article}
+\documentclass[11pt,a4paper]{article}
 \usepackage[a4paper, total={7in, 9in}]{geometry}
 \usepackage[latin1]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
 \usepackage{amssymb}
-\usepackage{graphicx,color,xcolor}
+\usepackage{graphicx,color}
 \usepackage{enumerate}
 \usepackage{url}
 
 \title{Simulation experiments for hide-and-seek with different seeker distribution update strategies}
 \author{Tirtharaj Dash}
-\date{March 10, 2020}
+\date{March 15, 2020}
 
 \begin{document}
 
@@ -31,11 +31,24 @@ We perform some simulation experiments for Hide-and-Seek with three different \t
 		\item If none of 2 or 3: distribute its probability mass to all the unopened boxes.
 		\item Repeat 1--4 until the hider is found.
 	\end{enumerate}
-	\item\label{supdloc} \textbf{Localised-sampling update:} Open a box. If the hider is not found in that box, open its unopened neighbors starightaway and check if the hider is found there. If hider is not found, then distribute the probability mass of all the boxes (the sampled box and its neighbors) to all unopened boxes equally. 
+	\item\label{supdloc} \textbf{Localised-sampling update:} The idea is that if an opened box is a ``good" box then its neighbors may also be good. So, we propose the following update strategy:
+	\begin{enumerate}[1.]
+		\item Open a box $i$
+		\item If the hider is not found in that box, \textbf{but it is a good box (i.e. $perf \geq \theta_h$)}, open its unopened neighbors starightaway and check if the hider is found there.
+		\item If hider is not found, then distribute the probability mass of all the boxes (the sampled box and its neighbors) to all unopened boxes equally.
+		\item If not 2., then distribute the mass of the opened box $i$ to all unopened boxes equally. 
+	\end{enumerate}
 \end{enumerate}
 
 \noindent
 The seeker update strategy (\ref{supdhc}) requires that the hider distribution falls into some continuity assumption. That is: the probability mass of a neighborhood of a box are in monotonic relationship to the probability of that box. This is a realistic demand and clauses which are related with each other are monotonic in their performance in some fashion. We construct such a hider distribution ($H$) with the following code\footnote{\url{https://github.com/tirtharajdash/multimodalGaussianDistro}}.
+
+\begin{figure}[h]
+	\centering
+	\includegraphics[width=0.5\textwidth]{sample.jpg}
+	\caption{Sample hider distibution}
+\end{figure}
+	
 
 \section{Experiments} \label{base_expt}
 
@@ -57,9 +70,9 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 		3 ($nbd=1$) & 1.000 & 486.041 & 271.251 \\
 		3 ($nbd=2$) & 1.000 & 458.027 & 269.987 \\
 		3 ($nbd=3$) & 1.000 & 479.270 & 279.110 \\
-		4 ($lnbd=1$) & 1.000 & 713.899 & 281.582 \\
-		4 ($lnbd=2$) & 1.000 & 783.193 & 255.153 \\
-		4 ($lnbd=3$) & 1.000 & 839.920 & 234.323 \\
+		4 ($lnbd=1$) & 1.000 & 521.648 & 281.406 \\
+		4 ($lnbd=2$) & 1.000 & 559.455 & 283.613 \\
+		4 ($lnbd=3$) & 1.000 & 569.803 & 290.259 \\
 		\hline 
 		\hline 
 		\multicolumn{4}{c}{$n = 2000$} \\ 
@@ -69,9 +82,9 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 		3 ($nbd=1$) & 1.000 & 963.457 & 550.133 \\
 		3 ($nbd=2$) & 1.000 & 961.946 & 551.028 \\
 		3 ($nbd=3$) & 1.000 & 968.335 & 564.515 \\
-		4 ($lnbd=1$) & 1.000 & 1458.508 & 530.032 \\
-		4 ($lnbd=2$) & 1.000 & 1597.152 & 470.655 \\
-		4 ($lnbd=3$) & 1.000 & 1689.032 & 460.411 \\
+		4 ($lnbd=1$) & 1.000 & 1053.850 & 578.713 \\
+		4 ($lnbd=2$) & 1.000 & 1118.901 & 560.618 \\
+		4 ($lnbd=3$) & 1.000 & 1105.028 & 559.592 \\
 		\hline 
 		\hline 
 		\multicolumn{4}{c}{$n = 3000$} \\ 
@@ -81,9 +94,9 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 		3 ($nbd=1$) & 1.000 & 1436.214 & 801.100 \\
 		3 ($nbd=2$) & 1.000 & 1396.195 & 840.066 \\
 		3 ($nbd=2$) & 1.000 & 1464.990 & 840.695 \\
-		4 ($lnbd=1$) & 1.000 & 2158.499 & 824.005 \\
-		4 ($lnbd=2$) & 1.000 & 2394.354 & 743.630 \\
-		4 ($lnbd=3$) & 1.000 & 2531.999 & 687.815 \\
+		4 ($lnbd=1$) & 1.000 & 1611.752 & 872.266 \\
+		4 ($lnbd=2$) & 1.000 & 1632.951 & 855.368 \\
+		4 ($lnbd=3$) & 1.000 & 1725.939 & 853.418 \\
 		\hline 
 		\hline 
 	\end{tabular}
@@ -99,12 +112,18 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 
 	\item[Interpretation 2] The localised sampling based seeker update strategy described in \ref{supdloc} has following effects on average number of misses.
 	\begin{itemize}
-		\item It is worse than other update strategies (1--3).
-		\item Bigger neighborhood sizes have adverse effect on the avergae number of misses. This could be due to the fact that we are starting with a uniform neighborhood and we are opening opening more number of bad boxes.
+		\item It is worse than to seeker update strategy \ref{supdhc}.
+		\item Bigger neighborhood sizes have adverse effect on the avergae number of misses. This could be due to the fact that we are starting with a uniform neighborhood and we don't have much idea about the true hider distribution yet.
 	\end{itemize}
 	
 \end{description}
 
+\section{Conclusions}
+
+The seeker update strategy as described in \ref{supdhc} is the \textbf{best} update strategy, when the hider is not known, but a structural relationship among the boxes is known. The performance 
+associated with a box can only be known after opening the box. This kind of hider structure space is applicable to ILP hypothesis space, where the space forms a lattice of clauses and each clause is associated with a performance (e.g. Laplacian smoothed accuracy: $\frac{P+1}{P+N+2}$, where $P$ and $N$ are the number of positive and negative instances respectively).
+
+Our next set of experiments will be testing the applicability of this new seeker update strategy for ILP hypothesis obtained for real-world problems as described in a separate report.
 
 	
 \end{document}

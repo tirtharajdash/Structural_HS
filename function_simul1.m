@@ -104,20 +104,25 @@ for hideIter = 1:MaxHideTrials
                 S(Opened) = 0;
                 S = S / sum(S);
             case 4 %structural update (local sampling)
-                nbdInOpened = intersect(Opened,localnbd{box});
-                nbdToOpen = setdiff(localnbd{box},nbdInOpened);
-                for i=1:length(nbdToOpen)
-                    if(hBox == nbdToOpen(i))
-                        HIT(hideIter) = 1; %hider was found by seeker
-                        MISS(hideIter) = MissCnt;
-                        break;
-                    else
-                        MissCnt = MissCnt + 1;
-                        Opened(MissCnt) = nbdToOpen(i);
+                %if the opened box is a good box
+                if Hperf(box) >= thetaH
+                    nbdInOpened = intersect(Opened,localnbd{box});
+                    nbdToOpen = setdiff(localnbd{box},nbdInOpened);
+                    for i=1:length(nbdToOpen)
+                        if(hBox == nbdToOpen(i))
+                            HIT(hideIter) = 1; %hider was found by seeker
+                            MISS(hideIter) = MissCnt;
+                            break;
+                        else
+                            MissCnt = MissCnt + 1;
+                            Opened(MissCnt) = nbdToOpen(i);
+                        end
                     end
+                    %distribute the probabilities
+                    S(Opened) = 0;
+                else %otherwise, just use the update in Case-2
+                    S(Opened) = 0;
                 end
-                %without replacement (case 2 type)
-                S(Opened) = 0;
                 S = S / sum(S);
         end
         
