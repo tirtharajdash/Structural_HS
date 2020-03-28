@@ -1,5 +1,5 @@
 \documentclass[11pt,a4paper]{article}
-\usepackage[a4paper, total={7in, 9in}]{geometry}
+\usepackage[a4paper, total={6in, 8in}]{geometry}
 \usepackage[latin1]{inputenc}
 \usepackage{amsmath}
 \usepackage{amsfonts}
@@ -10,7 +10,7 @@
 
 \title{Simulation experiments for hide-and-seek with different seeker distribution update strategies}
 \author{Tirtharaj Dash}
-\date{March 15, 2020}
+\date{March, 2020}
 
 \begin{document}
 
@@ -50,7 +50,7 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 \end{figure}
 	
 
-\section{Experiments} \label{base_expt}
+\section{Experiments -- Base} \label{base_expt}
 
 \begin{description}
 	\item[Parameter setting] The experiments are performed for number of boxes $n = \{1000, 2000, 3000\}$. The maximum hiding trials is set at $1000$. We call it a \textbf{failure}, if the hider is not found within $n$ searches by using the seeker distribution. The neighborhood size ($nbd$) is varied as \{1,2,3\}. For all the experiments reported here, we define performance of a box by: $perf(i) = \frac{h_i}{\max(h_1,\ldots, h_n)}$, where $H = \{h_1,\ldots, h_n\}$ is the hider distribution. The thresholds are fixed at $\theta_h = 0.80$ and $\theta_c = 0.4$. The proportion of boxes that have high probability mass (spikes in $H$) is fixed at 10\%. For the seeker update stragegy described in \ref{supdloc} requires a neighborhood size ($lnbd$). This is varied as \{1,2,3\}.
@@ -93,7 +93,7 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 		2 &  1.000 & 1473.717 & 865.756 \\
 		3 ($nbd=1$) & 1.000 & 1436.214 & 801.100 \\
 		3 ($nbd=2$) & 1.000 & 1396.195 & 840.066 \\
-		3 ($nbd=2$) & 1.000 & 1464.990 & 840.695 \\
+		3 ($nbd=3$) & 1.000 & 1464.990 & 840.695 \\
 		4 ($lnbd=1$) & 1.000 & 1611.752 & 872.266 \\
 		4 ($lnbd=2$) & 1.000 & 1632.951 & 855.368 \\
 		4 ($lnbd=3$) & 1.000 & 1725.939 & 853.418 \\
@@ -102,7 +102,7 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 	\end{tabular}
 	\caption{Average number of misses: $H$ is a multimodal distribution with 10\% spikes, and $S$ is updated using three different update strategies (1: no update, 2: without replacement, 3: update using $\theta_h$ and $\theta_c$ using three different neighborhoods in \{1,2,3\}, 4: local sampling based update with local neighborhood in \{1,2,3\}).}
 	\end{figure}
-
+		
 	\item[Interpretation 1] The results suggest that the threshold based seeker update strategy (\ref{supdhc}):
 	\begin{itemize}
 		\item Reduces the average number of misses in comparison with search without replacement for which the expected number of misses is $\frac{n-1}{2}$ (i.e. choiceUpdS$=2$ in tables).
@@ -114,6 +114,72 @@ The seeker update strategy (\ref{supdhc}) requires that the hider distribution f
 	\begin{itemize}
 		\item It is worse than to seeker update strategy \ref{supdhc}.
 		\item Bigger neighborhood sizes have adverse effect on the avergae number of misses. This could be due to the fact that we are starting with a uniform neighborhood and we don't have much idea about the true hider distribution yet.
+	\end{itemize}
+\end{description}
+
+\subsection{Experiments -- Resource-bounded Localised-sampling Update}
+
+The localised sampling update strategy described in \ref{supdloc} contributes a lot of costs towards opening neighbors of a box when the box is a good box. Why does this happen? In the present case, as soon as the seeker finds a good box, it becomes greedy and opens its neighbors. This happens everytime it finds a good box. Opening the neighbors incurs costs, which gets added to the total number of misses. Now, we can restrict this number of neighbor opening to some $MAX\_LS \in (0,1)$ (maximum local sampling), where $MAX\_LS$ could be a function of $n$. We define this constant as follows:
+\begin{equation}
+MAX\_LS = k*n
+\end{equation}
+That is neighbor opening is allowed $k$ percentage of $n$ times. We call this strategy as `Resource-bounded localised sampling update'.
+
+\vspace{0.5cm}
+
+\noindent
+\textbf{Observation:} It is easy to verify that this is a \textbf{more general} case 
+of the seeker update strategy \ref{supdhc} and a \textbf{more specific} case of seeker update strategy \ref{supdloc}. That is:
+\begin{itemize}
+	\item $MAX\_LS = 0$ results in hot-cold update in \ref{supdhc}.
+	\item $MAX\_LS = \infty$ results in localised-sampling update in \ref{supdloc}.
+\end{itemize}
+
+\begin{description}
+	\item[Results] We conduct experiments with $k = \{0.01, 0.05,0.10\}$. The comparison is against the results obtained for the localised-sampling seeker update (\ref{supdloc}). The neighborhood of a box is fixed at 1. Refer Fig.\ref{fig:resboundedls}.
+	\begin{figure}[!h]
+		\centering
+		\begin{tabular}{llll}
+			\hline \hline 
+			choiceUpdS & SuccessRate & mean(misses) & sd(misses) \\
+			\hline \hline 
+			\multicolumn{4}{c}{$n = 1000$} \\ 
+			\hline 
+			3 ($nbd=1, \textcolor{red}{k = 0}$) & 1.000 & 486.041 & 271.251 \\
+			4 ($lnbd=1, \textcolor{red}{k = \infty}$) & 1.000 & 521.648 & 281.406 \\
+			4 ($lnbd=1, k = 0.01$) & 1.000 & 512.810 & 283.890 \\
+			4 ($lnbd=1, k = 0.05$) & 1.000 & 528.908 & 290.191 \\
+			4 ($lnbd=1, k = 0.10$), & 1.000 & 521.648 & 281.406 \\
+			\hline 
+			\hline 
+			\multicolumn{4}{c}{$n = 2000$} \\ 
+			\hline 
+			3 ($nbd=1, \textcolor{red}{k = 0}$) & 1.000 & 963.457 & 550.133 \\
+			4 ($lnbd=1, \textcolor{red}{k = \infty}$) & 1.000 & 1053.850 & 578.713 \\
+			4 ($lnbd=1, k = 0.01$) & 1.000 & 986.059 & 573.569 \\
+			4 ($lnbd=1, k = 0.05$) & 1.000 & 1031.794 & 572.295 \\
+			4 ($lnbd=1, k = 0.10$), &  1.000 & 1053.850 & 578.713 \\
+			\hline 
+			\hline 
+			\multicolumn{4}{c}{$n = 3000$} \\ 
+			\hline 
+			3 ($nbd=1, \textcolor{red}{k = 0}$) & 1.000 & 1436.214 & 801.100 \\
+			4 ($lnbd=1, \textcolor{red}{k = \infty}$) & 1.000 & 1611.752 & 872.266 \\
+			4 ($lnbd=1, k = 0.01$) & 1.000 & 1594.132 & 842.846 \\
+			4 ($lnbd=1, k = 0.05$) & 1.000 & 1560.329 & 858.586 \\
+			4 ($lnbd=1, k = 0.10$), & 1.000 & 1611.752 & 872.266 \\
+			\hline 
+			\hline 
+		\end{tabular}
+		\caption{Resource-bounded localised-sampling seeker update.}
+		\label{fig:resboundedls}
+	\end{figure}
+
+	\item[Interpretation] Here are the observations.
+	\begin{itemize}
+		\item As $k$ increases, the cost increases. This is expected.
+		\item In all cases, $k = 0.10$ results in \ref{supdloc}.
+		\item The results are worse than that of the hot-cold update strategy.
 	\end{itemize}
 	
 \end{description}

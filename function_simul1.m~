@@ -52,7 +52,7 @@ end
 %create the local neighborhood for boxes (case 4 update)
 if(choiceUpdS == 4)
     localnbd = createNeighbors(N,1); %arg2 is neighborhood size
-    MAX_LS = ceil(0.01*N); %maximum local sampling allowed 
+    MAX_LS = 0.10*N; %maximum local sampling allowed 
 end
 
 %% Search Procedure with Seeker Distribution, S

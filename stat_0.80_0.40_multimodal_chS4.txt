@@ -3,16 +3,16 @@ choiceH & choiceUpdS & SuccessRate & mean(misses) & sd(misses) \\
 \hline \hline 
 \multicolumn{5}{c}{$n = 1000$} \\ 
 \hline 
-5 & 4 &  1.000 & 569.803 & 290.259 \\
+5 & 4 &  1.000 & 512.810 & 283.890 \\
 \hline 
 \hline 
 \multicolumn{5}{c}{$n = 2000$} \\ 
 \hline 
-5 & 4 &  1.000 & 1105.028 & 559.592 \\
+5 & 4 &  1.000 & 986.059 & 573.569 \\
 \hline 
 \hline 
 \multicolumn{5}{c}{$n = 3000$} \\ 
 \hline 
-5 & 4 &  1.000 & 1725.939 & 853.418 \\
+5 & 4 &  1.000 & 1594.132 & 842.846 \\
 \hline 
 \hline 
